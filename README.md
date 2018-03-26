@@ -11,6 +11,6 @@ In order to provide this APIs, some essential preparations are required:
 ## Functionality that can be provided as your requirement
 
 - Connecting to a node on the SharderChain network
-- Creating a account
+- Creating a accountID
 - Storing tagged file to the chain
 - Fetching a tagged file stored before
