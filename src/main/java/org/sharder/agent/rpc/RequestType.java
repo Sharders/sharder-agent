@@ -10,7 +10,7 @@ public enum RequestType {
     GET_ACCOUNT_ID("getAccountId"),
     SEND_MSG("sendMessage"),
     DOWNLOAD_DATA("downloadTaggedData"),
-    UPLOAD_DATA("downloadTaggedData");
+    UPLOAD_DATA("uploadTaggedData");
 
 
     private String type;

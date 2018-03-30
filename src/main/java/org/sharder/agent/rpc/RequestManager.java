@@ -140,18 +140,23 @@ public class RequestManager {
         Response response = null;
         MultipartBody.Builder requestBuilder = new MultipartBody.Builder();
         requestBuilder.setType(MultipartBody.FORM);
+        RequestBody fileBody = RequestBody.create(MediaType.parse(paramsMap.get("type")),file);
+        requestBuilder.addPart(Headers.of(
+                        "Content-Disposition",
+                        "form-data; name=\"file\"; filename=\""+file.getName()+"\"")
+                        , fileBody);
         for (String key : paramsMap.keySet()) {
             requestBuilder.addFormDataPart(key,paramsMap.get(key));
         }
-        requestBuilder.addFormDataPart("file", file.getName(),
-                        RequestBody.create(MediaType.parse(paramsMap.get("fileType")), file));
-
         Request request = new Request.Builder()
                 .url(BASE_URL+"/"+ACTION_URL)
                 .post(requestBuilder.build())
                 .build();
+        logger.debug(request.toString());
         final Call call = mOkHttpClient.newCall(request);
         response = call.execute();
+        Headers requestHeaders= response.networkResponse().request().headers();
+        logger.debug(requestHeaders.toString());
         return response;
     }
 }

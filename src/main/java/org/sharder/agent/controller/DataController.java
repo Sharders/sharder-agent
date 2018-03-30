@@ -1,23 +1,19 @@
 package org.sharder.agent.controller;
 
 import io.swagger.annotations.*;
-import org.sharder.agent.domain.TaggedData;
+import okhttp3.ResponseBody;
+import org.sharder.agent.domain.TransactionResponse;
 import org.sharder.agent.service.DataService;
 import org.sharder.agent.utils.JsonResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.FileSystemUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 
 /**
  * DataController
@@ -36,40 +32,44 @@ public class DataController {
 
     /**
      * Storing data to chain
-     * @param
+     * @param file
+     * @param passPhrase
      * @return ResponseEntity<JsonResult>
+     * @throws IOException
      */
-    @ApiOperation(value = "upload a file", notes = "")
+    @ApiOperation(value = "upload a file", notes = "upload a file to chain")
     @ApiImplicitParams({
         @ApiImplicitParam(name="file", value = "file", required = true, dataType = "MultipartFile", paramType = "requestBody"),
+        @ApiImplicitParam(name="passPhrase", value = "passPhrase", required = true, dataType = "String", paramType = "requestBody"),
     })
-    @RequestMapping(headers=("content-type=multipart/*"),method = RequestMethod.POST)
-    public ResponseEntity<JsonResult> store(@RequestParam("file") MultipartFile file) throws IOException {
-        //TODO
-        dataService.upload(file);
+    @ApiResponse(code = 200, message = "ok" , response = TransactionResponse.class)
+    @RequestMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, method = RequestMethod.POST)
+    public ResponseEntity<JsonResult> store(@RequestParam(value = "file", required = true) MultipartFile file, @RequestParam(value = "passPhrase", required = true) String passPhrase) throws IOException {
+        logger.debug(file.getOriginalFilename());
+        TransactionResponse tr =  dataService.upload(passPhrase, file);
         JsonResult result = new JsonResult();
+        result.setStatus("ok");
+        result.setResult(tr);
         return ResponseEntity.ok(result);
     }
 
     /**
      * retrieve data from chain
-     * @param
+     * @param txId transaction id
      * @return ResponseEntity<JsonResult>
+     * @throws IOException
      */
-    @ApiOperation(value = "download a file", notes = "")
+    @ApiOperation(value = "retrieve a file", notes = "retrieve a file with transaction id")
     @ApiImplicitParams({
             @ApiImplicitParam(name="txId", value = "data", required = true, dataType = "String", paramType = "path"),
     })
-    @RequestMapping(path = "/{txId}", method = RequestMethod.GET, produces = "image/png")
-    public ResponseEntity<InputStreamResource> retrieve(@PathVariable("txId") String txId) throws IOException {
+    @RequestMapping(path = "/{txId}", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> retrieve(@PathVariable("txId") String txId) throws IOException {
         //TODO
-        logger.debug("txID:{}",txId);
-        InputStream is = dataService.download(txId);
-        InputStreamResource isr = new InputStreamResource(is);
-
-//        String contentType = Files.probeContentType(isr.getFile().toPath());
-        logger.info("store sth");
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType("image/png"))
-                .contentLength(36556).body(isr);
+        ResponseBody rb = dataService.download(txId);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(rb.contentType().toString()))
+                .contentLength(rb.contentLength())
+                .body(rb.bytes());
     }
 }
