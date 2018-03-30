@@ -18,6 +18,16 @@ public class Account {
     @JsonProperty(value = "publicKey")
     private String publicKey;
 
+    private String passPhrase;
+
+    public String getPassPhrase() {
+        return passPhrase;
+    }
+
+    public void setPassPhrase(String passPhrase) {
+        this.passPhrase = passPhrase;
+    }
+
     public String getAccountID() {
         return accountID;
     }
