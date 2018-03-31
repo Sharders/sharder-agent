@@ -94,12 +94,12 @@ public class DataService {
         CommonsMultipartFile cf = (CommonsMultipartFile)multfile;
         DiskFileItem fi = (DiskFileItem) cf.getFileItem();
         File file = fi.getStoreLocation();
-//        if(file.length() < 2048){
-//            File tmpFile = new File(System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") +
-//                    file.getName());
-//            multfile.transferTo(tmpFile);
-//            return tmpFile;
-//        }
+        if(file.length() < 2048){
+            File tmpFile = new File(System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") +
+                    file.getName());
+            multfile.transferTo(tmpFile);
+            return tmpFile;
+        }
         return file;
     }
 }

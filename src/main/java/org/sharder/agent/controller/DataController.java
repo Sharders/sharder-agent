@@ -24,7 +24,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/v1/data")
-@Api(value = "Data operations")
+@Api(value = "Data operations", tags = {"数据操作"})
 public class DataController {
     private static final Logger logger = LoggerFactory.getLogger(DataController.class);
     @Autowired
@@ -39,10 +39,9 @@ public class DataController {
      */
     @ApiOperation(value = "upload a file", notes = "upload a file to chain")
     @ApiImplicitParams({
-        @ApiImplicitParam(name="file", value = "file", required = true, dataType = "MultipartFile", paramType = "requestBody"),
-        @ApiImplicitParam(name="passPhrase", value = "passPhrase", required = true, dataType = "String", paramType = "requestBody"),
+        @ApiImplicitParam(name="file", value = "file", required = true, dataType = "MultipartFile", paramType = "body"),
+        @ApiImplicitParam(name="passPhrase", value = "passPhrase", required = true, paramType = "body"),
     })
-    @ApiResponse(code = 200, message = "ok" , response = TransactionResponse.class)
     @RequestMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, method = RequestMethod.POST)
     public ResponseEntity<JsonResult> store(@RequestParam(value = "file", required = true) MultipartFile file, @RequestParam(value = "passPhrase", required = true) String passPhrase) throws IOException {
         logger.debug(file.getOriginalFilename());
@@ -61,7 +60,7 @@ public class DataController {
      */
     @ApiOperation(value = "retrieve a file", notes = "retrieve a file with transaction id")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="txId", value = "data", required = true, dataType = "String", paramType = "path"),
+            @ApiImplicitParam(name="txId", value = "transaction id", required = true, paramType = "path"),
     })
     @RequestMapping(path = "/{txId}", method = RequestMethod.GET)
     public ResponseEntity<byte[]> retrieve(@PathVariable("txId") String txId) throws IOException {

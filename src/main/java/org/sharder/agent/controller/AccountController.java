@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -23,7 +24,7 @@ import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/v1/account")
-@Api(value = "Account Operations")
+@Api(value = "Account Operations", tags={"账户操作接口"})
 public class AccountController {
     private static final Logger logger = LoggerFactory.getLogger(AccountController.class);
     @Autowired
@@ -37,7 +38,7 @@ public class AccountController {
      * TODO broadcast to the network after create an account immediately by send the new account a message
      */
     @ApiOperation(value = "Create a new account", notes = "Create a new account with your passPhrase")
-    @ApiImplicitParam(name="passPhrase", value = "passPhrase", required = true, dataType = "String", paramType = "requestBody")
+    @ApiImplicitParam(name="passPhrase", value = "passPhrase", required = true, paramType = "body")
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<JsonResult> createAccount(@RequestParam String passPhrase) throws IOException {
         String newPassPhrase = PassPhraseGenerator.makeRandomSecretPhrase();
@@ -75,12 +76,13 @@ public class AccountController {
      * @param secretPhrase
      * @return ResponseEntity<JsonResult>
      */
+    @ApiIgnore
     @ApiOperation(value = "Send SS", notes = "Send SS to an account")
     @ApiImplicitParams({
-        @ApiImplicitParam(name="recipient", value = "recipient address", required = true, dataType = "String", paramType = "requestBody"),
-        @ApiImplicitParam(name="recipientPublicKey", value = "the publickey of recipient", required = true, dataType = "String", paramType = "requestBody"),
+        @ApiImplicitParam(name="recipient", value = "recipient address", required = true, paramType = "requestBody"),
+        @ApiImplicitParam(name="recipientPublicKey", value = "the publickey of recipient", required = true, paramType = "requestBody"),
         @ApiImplicitParam(name="amount", value = "amountSS", required = true, dataType = "int", paramType = "requestBody"),
-        @ApiImplicitParam(name="secretPhrase", value = "secretPhrase", required = true, dataType = "String", paramType = "requestBody"),
+        @ApiImplicitParam(name="secretPhrase", value = "secretPhrase", required = true, paramType = "requestBody"),
     })
     @RequestMapping(value = "/sendSS", method = RequestMethod.POST)
     public ResponseEntity<JsonResult> sendMoney(@RequestParam String recipient,
