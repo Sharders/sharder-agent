@@ -10,7 +10,9 @@ public enum RequestType {
     GET_ACCOUNT_ID("getAccountId"),
     SEND_MSG("sendMessage"),
     DOWNLOAD_DATA("downloadTaggedData"),
-    UPLOAD_DATA("uploadTaggedData");
+    UPLOAD_DATA("uploadTaggedData"),
+    GET_BLOCKS("getBlocks"),
+    GET_ACCOUNT_TRANSACTIONS("getBlockchainTransactions");
 
 
     private String type;
