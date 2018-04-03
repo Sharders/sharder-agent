@@ -38,7 +38,7 @@ public class AccountController {
      * TODO broadcast to the network after create an account immediately by send the new account a message
      */
     @ApiOperation(value = "Create a new account", notes = "Create a new account with your passPhrase")
-    @ApiImplicitParam(name="passPhrase", value = "passPhrase", required = true, paramType = "body")
+    @ApiImplicitParam(name="passPhrase", value = "the passPhrase of invoker account, not the account's to be created", required = true, paramType = "body")
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<JsonResult> createAccount(@RequestParam String passPhrase) throws IOException {
         String newPassPhrase = PassPhraseGenerator.makeRandomSecretPhrase();

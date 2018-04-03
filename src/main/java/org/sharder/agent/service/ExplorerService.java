@@ -37,6 +37,7 @@ public class ExplorerService {
         params.put("requestType",RequestType.GET_BLOCKS.getType());
         params.put("firstIndex",firstIndex.toString());
         params.put("lastIndex",lastIndex.toString());
+        params.put("includeTransactions","true");
         Response response = requestManager.requestSyn(RequestManager.TYPE_GET, params);
         String validResponseStr = null;
         if(response.isSuccessful()){
