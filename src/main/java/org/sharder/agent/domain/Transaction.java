@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
- * <DESC HERE>
+ * Transaction
  *
  * @author bubai
  * @date 2018/4/2

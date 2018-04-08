@@ -59,10 +59,11 @@ public class DataService {
      * TODO add params to adjust business logic
      * @param secretPhrase secretPhrase
      * @param mfile MultipartFile
+     * @param clientAccount String
      * @return TransactionResponse
      * @throws IOException
      */
-    public TransactionResponse upload(String secretPhrase, MultipartFile mfile) throws IOException {
+    public TransactionResponse upload(String secretPhrase, MultipartFile mfile, String clientAccount) throws IOException {
         TransactionResponse tr = new TransactionResponse();
         HashMap<String,String> params = new HashMap<>();
         params.put("requestType",RequestType.UPLOAD_DATA.getType());
@@ -70,6 +71,7 @@ public class DataService {
         params.put("filename",mfile.getOriginalFilename());
         params.put("feeNQT","0");
         params.put("deadline","60");
+        params.put("channel",clientAccount);
         params.put("secretPhrase",secretPhrase);
         File file = multipartToFile(mfile);
         Response response = requestManager.requestPostMultipartBySyn(params, file);

@@ -11,27 +11,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Account {
-    @JsonProperty(value = "account")
     private String accountID;
-    @JsonProperty(value = "accountRS")
     private String accountRS;
-    @JsonProperty(value = "publicKey")
     private String publicKey;
-
     private String passPhrase;
 
-    public String getPassPhrase() {
-        return passPhrase;
-    }
-
-    public void setPassPhrase(String passPhrase) {
-        this.passPhrase = passPhrase;
-    }
-
+    @JsonProperty(value = "accountId")
     public String getAccountID() {
         return accountID;
     }
 
+    @JsonProperty(value = "account")
     public void setAccountID(String accountID) {
         this.accountID = accountID;
     }
@@ -51,4 +41,13 @@ public class Account {
     public void setPublicKey(String publicKey) {
         this.publicKey = publicKey;
     }
+
+    public String getPassPhrase() {
+        return passPhrase;
+    }
+
+    public void setPassPhrase(String passPhrase) {
+        this.passPhrase = passPhrase;
+    }
+
 }

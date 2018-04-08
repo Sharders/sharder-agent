@@ -3,6 +3,8 @@ package org.sharder.agent.exception;
 import org.sharder.agent.utils.JsonResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -28,13 +30,14 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
-    public JsonResult defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
+    public ResponseEntity<JsonResult> defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
         JsonResult result = new JsonResult();
         e.printStackTrace();
         String errorInfo = e.getClass().getName() + ":" + e.getMessage();
         logger.error(errorInfo);
         result.setResult(errorInfo);
         result.setStatus("error");
-        return result;
+        ResponseEntity responseEntity = new ResponseEntity(result, HttpStatus.INTERNAL_SERVER_ERROR);
+        return responseEntity;
     }
 }

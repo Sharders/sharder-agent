@@ -1,7 +1,7 @@
 package org.sharder.agent.rpc;
 
 /**
- * <DESC HERE>
+ * HeadType
  *
  * @author bubai
  * @date 2018/3/26

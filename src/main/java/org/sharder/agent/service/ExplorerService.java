@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.Response;
 import org.sharder.agent.domain.Block;
+import org.sharder.agent.domain.BlockHeight;
 import org.sharder.agent.domain.ErrorDescription;
 import org.sharder.agent.domain.Transaction;
 import org.sharder.agent.rpc.RequestManager;
@@ -50,11 +51,13 @@ public class ExplorerService {
         return blocks;
     }
 
-    public ArrayList<Transaction> getAccountTxs(String account) throws Exception {
+    public ArrayList<Transaction> getAccountTxs(String account, BigInteger firstIndex, BigInteger lastIndex) throws Exception {
         ArrayList<Transaction> transactions = null;
         HashMap<String,String> params = new HashMap<>();
         params.put("requestType",RequestType.GET_ACCOUNT_TRANSACTIONS.getType());
         params.put("account",account);
+        params.put("firstIndex",firstIndex.toString());
+        params.put("lastIndex",lastIndex.toString());
         Response response = requestManager.requestSyn(RequestManager.TYPE_GET, params);
         String validResponseStr = null;
         ObjectMapper mapper = new ObjectMapper();
@@ -69,5 +72,20 @@ public class ExplorerService {
         }
         transactions = mapper.readValue(validResponseStr,new TypeReference<ArrayList<Transaction>>(){});
         return transactions;
+    }
+
+    public BlockHeight getLastedBlockHeight() throws Exception {
+        BlockHeight blockHeight = new BlockHeight();
+        HashMap<String,String> params = new HashMap<>();
+        params.put("requestType",RequestType.GET_BLOCK_STATUS.getType());
+        Response response = requestManager.requestSyn(RequestManager.TYPE_GET, params);
+        String responseStr = null;
+        ObjectMapper mapper = new ObjectMapper();
+        if(response.isSuccessful()){
+            responseStr = response.body().string();
+            logger.debug("response success:{}",responseStr);
+        }
+        blockHeight = mapper.readValue(responseStr, new TypeReference<BlockHeight>(){});
+        return blockHeight;
     }
 }

@@ -3,6 +3,7 @@ package org.sharder.agent.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.Response;
 import org.sharder.agent.domain.Account;
+import org.sharder.agent.domain.ErrorDescription;
 import org.sharder.agent.domain.TransactionResponse;
 import org.sharder.agent.rpc.RequestManager;
 import org.sharder.agent.rpc.RequestType;
@@ -48,7 +49,7 @@ public class AccountService {
         return null;
     }
 
-    public void senMessage(Account account, String passPhrase) throws IOException {
+    public void senMessage(Account account, String passPhrase) throws Exception {
         HashMap<String,String> params = new HashMap<>();
         params.put("requestType",RequestType.SEND_MSG.getType());
         params.put("secretPhrase",passPhrase);
@@ -59,9 +60,14 @@ public class AccountService {
         params.put("feeNQT","0");
         Response response = requestManager.requestSyn(RequestManager.TYPE_POST, params);
         String responseStr = null;
+        ObjectMapper mapper = new ObjectMapper();
         if(response.isSuccessful()){
             responseStr = response.body().string();
             logger.debug("response success:{}",responseStr);
+            ErrorDescription ed = mapper.readValue(responseStr,ErrorDescription.class);
+            if (ed.getErrorDescription() != null) {
+                throw new Exception(ed.getErrorDescription());
+            }
         }
 
     }
