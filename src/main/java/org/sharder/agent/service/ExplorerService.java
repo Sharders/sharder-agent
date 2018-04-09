@@ -9,6 +9,7 @@ import org.sharder.agent.domain.ErrorDescription;
 import org.sharder.agent.domain.Transaction;
 import org.sharder.agent.rpc.RequestManager;
 import org.sharder.agent.rpc.RequestType;
+import org.sharder.agent.utils.ResponseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,13 @@ public class ExplorerService {
     @Autowired
     private RequestManager requestManager;
 
+    /**
+     * Get blocks from firstIndex to lastIndex
+     * @param firstIndex
+     * @param lastIndex
+     * @return ArrayList<Block>
+     * @throws IOException
+     */
     public ArrayList<Block> getBlocks(BigInteger firstIndex, BigInteger lastIndex) throws IOException {
         ArrayList<Block> blocks = null;
         HashMap<String,String> params = new HashMap<>();
@@ -51,6 +59,14 @@ public class ExplorerService {
         return blocks;
     }
 
+    /**
+     * Get account's transactions firstIndex to lastIndex
+     * @param account
+     * @param firstIndex
+     * @param lastIndex
+     * @return
+     * @throws Exception
+     */
     public ArrayList<Transaction> getAccountTxs(String account, BigInteger firstIndex, BigInteger lastIndex) throws Exception {
         ArrayList<Transaction> transactions = null;
         HashMap<String,String> params = new HashMap<>();
@@ -74,18 +90,31 @@ public class ExplorerService {
         return transactions;
     }
 
+    /**
+     * Get lasted block height
+     * @return BlockHeight
+     * @throws Exception
+     */
     public BlockHeight getLastedBlockHeight() throws Exception {
-        BlockHeight blockHeight = new BlockHeight();
         HashMap<String,String> params = new HashMap<>();
         params.put("requestType",RequestType.GET_BLOCK_STATUS.getType());
         Response response = requestManager.requestSyn(RequestManager.TYPE_GET, params);
-        String responseStr = null;
-        ObjectMapper mapper = new ObjectMapper();
-        if(response.isSuccessful()){
-            responseStr = response.body().string();
-            logger.debug("response success:{}",responseStr);
-        }
-        blockHeight = mapper.readValue(responseStr, new TypeReference<BlockHeight>(){});
+        BlockHeight blockHeight = ResponseUtils.convert(response, BlockHeight.class);
         return blockHeight;
+    }
+
+    /**
+     * Get block info with transactions by height
+     * @param height
+     * @return Block
+     * @throws Exception
+     */
+    public Block getBlock(BigInteger height) throws Exception {
+        HashMap<String,String> params = new HashMap<>();
+        params.put("requestType",RequestType.GET_BLOCK.getType());
+        params.put("height",height.toString());
+        params.put("includeTransactions","true");
+        Response response = requestManager.requestSyn(RequestManager.TYPE_GET, params);
+        return ResponseUtils.convert(response, Block.class);
     }
 }

@@ -13,7 +13,9 @@ public enum RequestType {
     UPLOAD_DATA("uploadTaggedData"),
     GET_BLOCKS("getBlocks"),
     GET_ACCOUNT_TRANSACTIONS("getBlockchainTransactions"),
-    GET_BLOCK_STATUS("getBlockchainStatus");
+    GET_BLOCK_STATUS("getBlockchainStatus"),
+    GET_TRANSACTION("getTransaction"),
+    GET_BLOCK("getBlock");
 
 
     private String type;

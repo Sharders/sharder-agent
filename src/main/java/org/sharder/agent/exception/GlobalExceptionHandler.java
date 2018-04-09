@@ -1,6 +1,6 @@
 package org.sharder.agent.exception;
 
-import org.sharder.agent.utils.JsonResult;
+import org.sharder.agent.domain.ErrorDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -30,14 +30,21 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
-    public ResponseEntity<JsonResult> defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
-        JsonResult result = new JsonResult();
+    public ResponseEntity<String> defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
         e.printStackTrace();
         String errorInfo = e.getClass().getName() + ":" + e.getMessage();
         logger.error(errorInfo);
-        result.setResult(errorInfo);
-        result.setStatus("error");
-        ResponseEntity responseEntity = new ResponseEntity(result, HttpStatus.INTERNAL_SERVER_ERROR);
+        ResponseEntity responseEntity = new ResponseEntity(errorInfo, HttpStatus.INTERNAL_SERVER_ERROR);
+        return responseEntity;
+    }
+
+    @ExceptionHandler(value = SharderAgentException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorDescription> sharderAgentErrorHandler(HttpServletRequest req, SharderAgentException e) throws Exception {
+        e.printStackTrace();
+        String errorInfo = e.getClass().getName() + ":" + e.getMessage();
+        logger.error(errorInfo);
+        ResponseEntity responseEntity = new ResponseEntity(e.getErrorDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
         return responseEntity;
     }
 }

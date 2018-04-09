@@ -3,7 +3,7 @@ package org.sharder.agent.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
- * <DESC HERE>
+ * ErrorDescription
  *
  * @author bubai
  * @date 2018/3/30
@@ -13,6 +13,14 @@ public class ErrorDescription {
 
     private String errorDescription;
     private int errorCode;
+
+    public ErrorDescription() {
+    }
+
+    public ErrorDescription(String errorDescription, int errorCode) {
+        this.errorDescription = errorDescription;
+        this.errorCode = errorCode;
+    }
 
     public String getErrorDescription() {
         return errorDescription;

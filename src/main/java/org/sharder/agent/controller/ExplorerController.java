@@ -4,7 +4,6 @@ import org.sharder.agent.domain.Block;
 import org.sharder.agent.domain.BlockHeight;
 import org.sharder.agent.domain.Transaction;
 import org.sharder.agent.service.ExplorerService;
-import org.sharder.agent.utils.JsonResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ public class ExplorerController {
     @Autowired
     private ExplorerService explorerService;
 
-
     /**
      * Get indicate blocks with index
      * @param firstIndex
@@ -38,13 +36,22 @@ public class ExplorerController {
      * @throws IOException
      */
     @RequestMapping(value = "/blocks/{firstIndex}/{lastIndex}", method = RequestMethod.GET)
-    public ResponseEntity<JsonResult> getBlocks(@PathVariable(required = false) BigInteger firstIndex,
+    public ResponseEntity<ArrayList<Block>> getBlocks(@PathVariable(required = false) BigInteger firstIndex,
                                                 @PathVariable(required = true) BigInteger lastIndex) throws IOException {
-        JsonResult result = new JsonResult();
         ArrayList<Block> blocks = explorerService.getBlocks(firstIndex, lastIndex);
-        result.setResult(blocks);
-        result.setStatus("ok");
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(blocks);
+    }
+
+    /**
+     * Get block info with transactions by height
+     * @param height
+     * @return ResponseEntity<Block>
+     * @throws Exception
+     */
+    @RequestMapping(value = "/blocks/{height}", method = RequestMethod.GET)
+    public ResponseEntity<Block> getBlock(@PathVariable(required = true) BigInteger height) throws Exception {
+        Block block = explorerService.getBlock(height);
+        return ResponseEntity.ok(block);
     }
 
     /**
@@ -55,24 +62,23 @@ public class ExplorerController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/blocks/{account}/txs", method = RequestMethod.GET)
-    public ResponseEntity<JsonResult> getAccountTxs(@PathVariable(required = true) String account,
+    @RequestMapping(value = "/blocks/txs/{account}/{firstIndex}/{lastIndex}", method = RequestMethod.GET)
+    public ResponseEntity<ArrayList<Transaction>> getAccountTxs(@PathVariable(required = true) String account,
                                                     @PathVariable(required = false) BigInteger firstIndex,
                                                     @PathVariable(required = false) BigInteger lastIndex) throws Exception {
-        JsonResult result = new JsonResult();
         ArrayList<Transaction> transactions = explorerService.getAccountTxs(account, firstIndex, lastIndex);
-        result.setResult(transactions);
-        result.setStatus("ok");
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(transactions);
     }
 
+    /**
+     * Get lasted block height
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/blocks/height", method = RequestMethod.GET)
-    public ResponseEntity<JsonResult> getLastedBlockHeight() throws Exception {
-        JsonResult result = new JsonResult();
+    public ResponseEntity<BlockHeight> getLastedBlockHeight() throws Exception {
         BlockHeight blockHeight = explorerService.getLastedBlockHeight();
-        result.setResult(blockHeight);
-        result.setStatus("ok");
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(blockHeight);
     }
 
 }
