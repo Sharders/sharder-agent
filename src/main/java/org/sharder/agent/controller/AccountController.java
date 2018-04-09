@@ -30,8 +30,7 @@ public class AccountController {
      */
     @PostMapping
     public ResponseEntity<Account> createAccount(@RequestParam String passPhrase) throws Exception {
-        String newPassPhrase = PassPhraseGenerator.makeRandomSecretPhrase();
-//        String passPhrase = PassPhraseGenerator.generateFromMnemonicWords();
+        String newPassPhrase = PassPhraseGenerator.makeMnemonicWords();
         Account account = accountService.getAccountId(newPassPhrase);
         accountService.sendMessage(account,passPhrase);
         account.setPassPhrase(newPassPhrase);
