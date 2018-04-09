@@ -5,7 +5,7 @@
 
 	<groupId>org.sharder</groupId>
 	<artifactId>sharder-agent</artifactId>
-	<version>0.0.1</version>
+	<version>0.1.1</version>
 	<packaging>jar</packaging>
 
 	<name>Sharder Agent</name>
