@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
@@ -18,13 +18,13 @@ import java.util.ArrayList;
 public class Block {
     private String blockId;
     private String previousBlockId;
-    private BigInteger height;
+    private int height;
     private int payloadLength;
-    private BigInteger timestamp;
+    private long timestamp;
     private String generator;
     private String generatorRS;
     private ArrayList<Transaction> transactions;
-    private float totalFee;
+    private BigDecimal totalFee;
 
     @JsonProperty(value = "blockId", index = 0)
     public String getBlockId() {
@@ -46,11 +46,11 @@ public class Block {
         this.previousBlockId = previousBlockId;
     }
 
-    public BigInteger getHeight() {
+    public int getHeight() {
         return height;
     }
 
-    public void setHeight(BigInteger height) {
+    public void setHeight(int height) {
         this.height = height;
     }
 
@@ -62,11 +62,11 @@ public class Block {
         this.payloadLength = payloadLength;
     }
 
-    public BigInteger getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(BigInteger timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -95,12 +95,12 @@ public class Block {
     }
 
     @JsonProperty(value = "totalFee")
-    public float getTotalFee() {
+    public BigDecimal getTotalFee() {
         return totalFee;
     }
 
     @JsonProperty(value = "totalFeeNQT")
-    public void setTotalFee(float totalFee) {
-        this.totalFee = totalFee / 100000000;
+    public void setTotalFee(BigDecimal totalFee) {
+        this.totalFee = totalFee.divide(BigDecimal.valueOf(100000000L));;
     }
 }

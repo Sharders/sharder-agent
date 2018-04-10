@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 /**
  * Transaction
@@ -17,13 +16,13 @@ public class Transaction {
     private String transactionId;
     private String hash;
     private int type;
-    private String index;
+    private int index;
     private BigDecimal amount;
     private BigDecimal fee;
     private String sender;
     private String recipient;
-    private BigInteger height;
-    private BigInteger timestamp;
+    private int height;
+    private long timestamp;
 
     @JsonProperty(value = "transactionId")
     public String getTransactionId() {
@@ -54,12 +53,12 @@ public class Transaction {
     }
 
     @JsonProperty(value = "index")
-    public String getIndex() {
+    public int getIndex() {
         return index;
     }
 
     @JsonProperty(value = "transactionIndex")
-    public void setIndex(String index) {
+    public void setIndex(int index) {
         this.index = index;
     }
 
@@ -80,7 +79,7 @@ public class Transaction {
 
     @JsonProperty(value = "feeNQT")
     public void setFee(BigDecimal fee) {
-        this.fee = fee.divide(BigDecimal.valueOf(100000000L));;
+        this.fee = fee.divide(BigDecimal.valueOf(100000000L));
     }
 
     @JsonProperty(value = "sender")
@@ -103,19 +102,19 @@ public class Transaction {
         this.recipient = recipient;
     }
 
-    public BigInteger getHeight() {
+    public int getHeight() {
         return height;
     }
 
-    public void setHeight(BigInteger height) {
+    public void setHeight(int height) {
         this.height = height;
     }
 
-    public BigInteger getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(BigInteger timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 }
