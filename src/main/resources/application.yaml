@@ -2,7 +2,7 @@
 agent:
   rpc_url: http://49.4.9.166:3215
   action_url: sharder
-
+  upload_size: 42 * 1024
 ############ System Config ############
 server:
   port: 8088

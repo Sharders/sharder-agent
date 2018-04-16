@@ -1,5 +1,7 @@
 package org.sharder.agent.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -16,7 +18,7 @@ import java.io.IOException;
 @Component
 public class CorsFilter implements Filter {
 
-    final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CorsFilter.class);
+    final static Logger logger = LoggerFactory.getLogger(CorsFilter.class);
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
