@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
@@ -42,7 +43,7 @@ public class AccountService {
     }
 
     /**
-     * send Money to a Account
+     * Send Money to a Account
      * @param recipient
      * @param recipientPublicKey
      * @param amount
@@ -54,7 +55,7 @@ public class AccountService {
     }
 
     /**
-     * send Message to a Account
+     * Send Message to a Account
      * @param account Account
      * @param passPhrase String
      * @throws Exception
@@ -70,5 +71,18 @@ public class AccountService {
         params.put("feeNQT","0");
         Response response = requestManager.requestSyn(RequestManager.TYPE_POST, params);
         ResponseUtils.convert(response, Void.class);
+    }
+
+    /**
+     * Get Account Info by accountID or accountRS
+     * @param account
+     * @return
+     */
+    public Account getAccountInfo(String account) throws Exception {
+        HashMap<String,String> params = new HashMap<>();
+        params.put("requestType",RequestType.GET_ACCOUNT.getType());
+        params.put("account",account);
+        Response response = requestManager.requestSyn(RequestManager.TYPE_GET, params);
+        return ResponseUtils.convert(response, Account.class);
     }
 }

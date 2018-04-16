@@ -37,4 +37,9 @@ public class AccountController {
         return ResponseEntity.ok(account);
     }
 
+    @GetMapping("/{account}")
+    public ResponseEntity<Account> getAccountInfo(@PathVariable String account) throws Exception {
+        Account accountInfo = accountService.getAccountInfo(account);
+        return ResponseEntity.ok(accountInfo);
+    }
 }
