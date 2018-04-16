@@ -23,6 +23,7 @@ public class Transaction {
     private String recipient;
     private int height;
     private long timestamp;
+    private int confirmations;
 
     @JsonProperty(value = "transactionId")
     public String getTransactionId() {
@@ -116,5 +117,13 @@ public class Transaction {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public int getConfirmations() {
+        return confirmations;
+    }
+
+    public void setConfirmations(int confirmations) {
+        this.confirmations = confirmations;
     }
 }

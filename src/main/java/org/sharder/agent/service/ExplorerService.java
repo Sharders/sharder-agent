@@ -3,10 +3,7 @@ package org.sharder.agent.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.Response;
-import org.sharder.agent.domain.Block;
-import org.sharder.agent.domain.BlockHeight;
-import org.sharder.agent.domain.ErrorDescription;
-import org.sharder.agent.domain.Transaction;
+import org.sharder.agent.domain.*;
 import org.sharder.agent.rpc.RequestManager;
 import org.sharder.agent.rpc.RequestType;
 import org.sharder.agent.utils.ResponseUtils;
@@ -116,5 +113,12 @@ public class ExplorerService {
         params.put("includeTransactions","true");
         Response response = requestManager.requestSyn(RequestManager.TYPE_GET, params);
         return ResponseUtils.convert(response, Block.class);
+    }
+
+    public Constants getBlockChainConstants() throws Exception {
+        HashMap<String,String> params = new HashMap<>();
+        params.put("requestType",RequestType.GET_CONSTANTS.getType());
+        Response response = requestManager.requestSyn(RequestManager.TYPE_GET, params);
+        return ResponseUtils.convert(response, Constants.class);
     }
 }

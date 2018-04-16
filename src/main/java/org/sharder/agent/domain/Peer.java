@@ -10,10 +10,6 @@ public class Peer {
     private String address;
     private int type;
 
-    public Peer(String address) {
-        this.address = address;
-    }
-
     public String getAddress() {
         return address;
     }

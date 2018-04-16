@@ -15,7 +15,8 @@ public enum RequestType {
     GET_ACCOUNT_TRANSACTIONS("getBlockchainTransactions"),
     GET_BLOCK_STATUS("getBlockchainStatus"),
     GET_TRANSACTION("getTransaction"),
-    GET_BLOCK("getBlock");
+    GET_BLOCK("getBlock"),
+    GET_CONSTANTS("getConstants");
 
 
     private String type;

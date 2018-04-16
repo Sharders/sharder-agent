@@ -2,6 +2,7 @@ package org.sharder.agent.controller;
 
 import org.sharder.agent.domain.Block;
 import org.sharder.agent.domain.BlockHeight;
+import org.sharder.agent.domain.Constants;
 import org.sharder.agent.domain.Transaction;
 import org.sharder.agent.service.ExplorerService;
 import org.slf4j.Logger;
@@ -81,4 +82,14 @@ public class ExplorerController {
         return ResponseEntity.ok(blockHeight);
     }
 
+    /**
+     * Get constants of blockchain
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/blockchain/constants", method = RequestMethod.GET)
+    public ResponseEntity<Constants> getBlockChainConstants() throws Exception {
+        Constants constants = explorerService.getBlockChainConstants();
+        return ResponseEntity.ok(constants);
+    }
 }
