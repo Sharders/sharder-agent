@@ -52,7 +52,7 @@ public class DataController {
      * @return ResponseEntity<DataTransactionResponse>
      * @throws IOException
      */
-    @RequestMapping(path = "/text", method = RequestMethod.POST)
+    @RequestMapping(path = "/text", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, method = RequestMethod.POST)
     public ResponseEntity<DataTransactionResponse> storeData(@RequestParam( value = "data", required = true) String data,
                                             @RequestParam( value = "fileName", required = true) String fileName,
                                             @RequestParam( value = "fileType", required = true) String fileType,
@@ -84,8 +84,8 @@ public class DataController {
      * @throws IOException
      */
     @RequestMapping(path = "/text/{txId}", method = RequestMethod.GET)
-    public ResponseEntity<Data.Attachment> retrieveData(@PathVariable("txId") String txId) throws Exception {
+    public ResponseEntity<Data> retrieveData(@PathVariable("txId") String txId) throws Exception {
         Data data = dataService.retrive(txId);
-        return ResponseEntity.ok(data.getAttachment());
+        return ResponseEntity.ok(data);
     }
 }

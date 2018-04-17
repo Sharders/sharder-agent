@@ -42,9 +42,9 @@ public class RequestManager {
     public RequestManager() {
         //init OkHttpClient
         mOkHttpClient = new OkHttpClient().newBuilder()
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
+                .connectTimeout(0, TimeUnit.MINUTES)
+                .readTimeout(0, TimeUnit.MINUTES)
+                .writeTimeout(0, TimeUnit.MINUTES)
                 .build();
         okHttpHandler = new Handler();
     }
@@ -140,11 +140,13 @@ public class RequestManager {
         Response response = null;
         MultipartBody.Builder requestBuilder = new MultipartBody.Builder();
         requestBuilder.setType(MultipartBody.FORM);
-        RequestBody fileBody = RequestBody.create(MediaType.parse(paramsMap.get("type")),file);
-        requestBuilder.addPart(Headers.of(
-                        "Content-Disposition",
-                        "form-data; name=\"file\"; filename=\""+file.getName()+"\"")
-                        , fileBody);
+        if(file != null) {
+            RequestBody fileBody = RequestBody.create(MediaType.parse(paramsMap.get("type")), file);
+            requestBuilder.addPart(Headers.of(
+                    "Content-Disposition",
+                    "form-data; name=\"file\"; filename=\"" + file.getName() + "\"")
+                    , fileBody);
+        }
         for (String key : paramsMap.keySet()) {
             requestBuilder.addFormDataPart(key,paramsMap.get(key));
         }

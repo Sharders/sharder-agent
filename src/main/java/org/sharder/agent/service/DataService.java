@@ -64,7 +64,7 @@ public class DataService {
      */
     public Data retrive(String txID) throws Exception {
         HashMap<String,String> params = new HashMap<>();
-        params.put("requestType",RequestType.GET_TRANSACTION.getType());
+        params.put("requestType",RequestType.GET_DATA.getType());
         params.put("transaction",txID.trim());
         Response response = requestManager.requestSyn(RequestManager.TYPE_GET, params);
         return ResponseUtils.convert(response, Data.class);
@@ -116,7 +116,7 @@ public class DataService {
         params.put("deadline","60");
         params.put("channel",clientAccount);
         params.put("secretPhrase",secretPhrase);
-        Response response = requestManager.requestSyn(RequestManager.TYPE_POST, params);
+        Response response = requestManager.requestPostMultipartBySyn(params, null);
         return ResponseUtils.convert(response,DataTransactionResponse.class);
     }
 

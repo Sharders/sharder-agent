@@ -17,7 +17,8 @@ public enum RequestType {
     GET_TRANSACTION("getTransaction"),
     GET_BLOCK("getBlock"),
     GET_CONSTANTS("getConstants"),
-    GET_ACCOUNT("getAccount");
+    GET_ACCOUNT("getAccount"),
+    GET_DATA("getTaggedData");
 
 
     private String type;

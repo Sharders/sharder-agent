@@ -11,68 +11,55 @@ import com.fasterxml.jackson.annotation.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Data {
-    private Attachment attachment;
+    private String name;
+    private String channel;
+    private String data;
+    private String type;
+    private String hash;
 
-    public Attachment getAttachment() {
-        return attachment;
+    @JsonProperty(value = "fileName")
+    public String getName() {
+        return name;
     }
 
-    public void setAttachment(Attachment attachment) {
-        this.attachment = attachment;
+    @JsonProperty(value = "name")
+    public void setName(String name) {
+        this.name = name;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public class Attachment {
-        private String name;
-        private String channel;
-        private String data;
-        private String type;
-        private String hash;
+    @JsonProperty(value = "clientAccount")
+    public String getChannel() {
+        return channel;
+    }
 
-        @JsonProperty(value = "fileName")
-        public String getName() {
-            return name;
-        }
+    @JsonProperty(value = "channel")
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
 
-        @JsonProperty(value = "name")
-        public void setName(String name) {
-            this.name = name;
-        }
+    public String getHash() {
+        return hash;
+    }
 
-        @JsonProperty(value = "clientAccount")
-        public String getChannel() {
-            return channel;
-        }
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
 
-        @JsonProperty(value = "channel")
-        public void setChannel(String channel) {
-            this.channel = channel;
-        }
+    public String getData() {
+        return data;
+    }
 
-        public String getHash() {
-            return hash;
-        }
+    public void setData(String data) {
+        this.data = data;
+    }
 
-        public void setHash(String hash) {
-            this.hash = hash;
-        }
+    @JsonProperty(value = "fileType")
+    public String getType() {
+        return type;
+    }
 
-        public String getData() {
-            return data;
-        }
-
-        public void setData(String data) {
-            this.data = data;
-        }
-
-        @JsonProperty(value = "fileType")
-        public String getType() {
-            return type;
-        }
-
-        @JsonProperty(value = "type")
-        public void setType(String type) {
-            this.type = type;
-        }
+    @JsonProperty(value = "type")
+    public void setType(String type) {
+        this.type = type;
     }
 }

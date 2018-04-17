@@ -13,6 +13,9 @@ spring:
   servlet:
     multipart:
       enabled: false
+      max-file-size: 5MB
+      max-request-size: 10MB
+
 
 ######### Predefined Peers Config ##########
 peers:
