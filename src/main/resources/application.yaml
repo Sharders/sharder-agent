@@ -1,6 +1,6 @@
 ############ Agent Config ############
 agent:
-  rpc_url: http://49.4.9.166:3215
+  rpc_url: http://120.79.243.35:3215
   action_url: sharder
   upload_size: 5 * 1024 * 1024
 ############ System Config ############
@@ -15,7 +15,6 @@ spring:
       enabled: false
       max-file-size: 5MB
       max-request-size: 10MB
-
 
 ######### Predefined Peers Config ##########
 peers:

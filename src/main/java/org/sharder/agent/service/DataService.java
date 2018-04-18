@@ -116,7 +116,7 @@ public class DataService {
         params.put("deadline","60");
         params.put("channel",clientAccount);
         params.put("secretPhrase",secretPhrase);
-        Response response = requestManager.requestPostMultipartBySyn(params, null);
+        Response response = requestManager.requestSyn(RequestManager.TYPE_POST , params);
         return ResponseUtils.convert(response,DataTransactionResponse.class);
     }
 

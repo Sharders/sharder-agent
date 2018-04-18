@@ -52,7 +52,7 @@ public class DataController {
      * @return ResponseEntity<DataTransactionResponse>
      * @throws IOException
      */
-    @RequestMapping(path = "/text", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, method = RequestMethod.POST)
+    @RequestMapping(path = "/text", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}, method = RequestMethod.POST)
     public ResponseEntity<DataTransactionResponse> storeData(@RequestParam( value = "data", required = true) String data,
                                             @RequestParam( value = "fileName", required = true) String fileName,
                                             @RequestParam( value = "fileType", required = true) String fileType,
