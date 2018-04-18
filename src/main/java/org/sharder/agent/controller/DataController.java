@@ -8,11 +8,13 @@ import org.sharder.agent.service.DataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
@@ -52,12 +54,12 @@ public class DataController {
      * @return ResponseEntity<DataTransactionResponse>
      * @throws IOException
      */
-    @RequestMapping(path = "/text", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}, method = RequestMethod.POST)
-    public ResponseEntity<DataTransactionResponse> storeData(@RequestParam( value = "data", required = true) String data,
-                                            @RequestParam( value = "fileName", required = true) String fileName,
-                                            @RequestParam( value = "fileType", required = true) String fileType,
-                                            @RequestParam(value = "passPhrase", required = true) String passPhrase,
-                                            @RequestParam(value = "clientAccount", required = true) String clientAccount) throws Exception {
+    @RequestMapping(path = "/text", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE}, method = RequestMethod.POST)
+    public ResponseEntity<DataTransactionResponse> storeData(@RequestParam( value = "fileName", required = true) String fileName,
+                                                             @RequestParam( value = "data", required = true) String data,
+                                                             @RequestParam( value = "fileType", required = true) String fileType,
+                                                             @RequestParam(value = "passPhrase", required = true) String passPhrase,
+                                                             @RequestParam(value = "clientAccount", required = true) String clientAccount) throws Exception {
         DataTransactionResponse tr =  dataService.upload(passPhrase, data, fileName, fileType, clientAccount);
         return ResponseEntity.ok(tr);
     }

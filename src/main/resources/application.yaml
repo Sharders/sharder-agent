@@ -6,6 +6,8 @@ agent:
 ############ System Config ############
 server:
   port: 8088
+  tomcat:
+    max-http-post-size: -1
 #ssl.key-store: classpath:keystore.jks
 #ssl.key-store-password : 000000
 #ssl.key-password: 000000
