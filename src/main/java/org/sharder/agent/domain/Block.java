@@ -14,7 +14,6 @@ import java.util.ArrayList;
  * @date 2018/4/2
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonRootName(value = "blocks")
 public class Block {
     private String blockId;
     private String previousBlockId;
@@ -25,6 +24,8 @@ public class Block {
     private String generatorRS;
     private ArrayList<Transaction> transactions;
     private BigDecimal totalFee;
+    private int numberOfTransactions;
+    private BigDecimal totalAmount;
 
     @JsonProperty(value = "blockId", index = 0)
     public String getBlockId() {
@@ -102,5 +103,23 @@ public class Block {
     @JsonProperty(value = "totalFeeNQT")
     public void setTotalFee(BigDecimal totalFee) {
         this.totalFee = totalFee.divide(BigDecimal.valueOf(100000000L));;
+    }
+
+    public int getNumberOfTransactions() {
+        return numberOfTransactions;
+    }
+
+    public void setNumberOfTransactions(int numberOfTransactions) {
+        this.numberOfTransactions = numberOfTransactions;
+    }
+
+    @JsonProperty(value = "totalAmount")
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
+    @JsonProperty(value = "totalAmountNQT")
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount.divide(BigDecimal.valueOf(100000000L));
     }
 }
