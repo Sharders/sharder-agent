@@ -1,0 +1,27 @@
+############ Agent Config ############
+agent:
+  rpc_url: http://120.79.243.35:3215
+  action_url: sharder
+  upload_size: 5 * 1024 * 1024
+############ System Config ############
+server:
+  port: 8088
+  tomcat:
+    max-http-post-size: -1
+#ssl.key-store: classpath:keystore.jks
+#ssl.key-store-password : 000000
+#ssl.key-password: 000000
+spring:
+  servlet:
+    multipart:
+      enabled: false
+      max-file-size: 5MB
+      max-request-size: 10MB
+
+######### Predefined Peers Config ##########
+peers:
+  list:
+    - address: 49.4.9.166
+      type: 1
+    - address: 120.79.243.35
+      type: 1

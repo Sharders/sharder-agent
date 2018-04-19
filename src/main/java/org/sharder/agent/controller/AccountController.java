@@ -1,9 +1,8 @@
 package org.sharder.agent.controller;
 
-import io.swagger.annotations.*;
 import org.sharder.agent.domain.Account;
 import org.sharder.agent.service.AccountService;
-import org.sharder.agent.utils.JsonResult;
+import org.sharder.agent.utils.PassPhraseGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,37 +17,29 @@ import org.springframework.web.bind.annotation.*;
  */
 
 @RestController
-@RequestMapping(path = "/v1/account")
-@Api(value = "Account Operations")
+@RequestMapping("/v1/account")
 public class AccountController {
     private static final Logger logger = LoggerFactory.getLogger(AccountController.class);
     @Autowired
     private AccountService accountService;
+
     /**
-     * Create an account with secret phrase
-     * @param secretPhrase
-     * @return ResponseEntity<JsonResult>
+     * Create an account without secret phrase
+     * @return ResponseEntity<Account>
+     * auto generate secretPhrase for account instead of param (refer to nxt bridge)
      */
-    @ApiOperation(value = "Create a account", notes = "Create a account ID with secretPhrase")
-    @ApiImplicitParams({
-        @ApiImplicitParam(name="secretPhrase", value = "secretPhrase", required = true, dataType = "String", paramType = "requestBody"),
-    })
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<JsonResult> createAccount(@RequestParam String secretPhrase) {
-        JsonResult result = new JsonResult();
-        try {
-            Account account = accountService.getAccountId(secretPhrase);
-            result.setResult(account);
-            result.setStatus("ok");
-        } catch (Exception e) {
-            e.printStackTrace();
-            String errorInfo = e.getClass().getName() + ":" + e.getMessage();
-            result.setResult(errorInfo);
-            result.setStatus("error");
-            logger.error(errorInfo);
-        }
-        return ResponseEntity.ok(result);
+    @PostMapping
+    public ResponseEntity<Account> createAccount(@RequestParam String passPhrase) throws Exception {
+        String newPassPhrase = PassPhraseGenerator.makeMnemonicWords();
+        Account account = accountService.getAccountId(newPassPhrase);
+        accountService.sendMessage(account,passPhrase);
+        account.setPassPhrase(newPassPhrase);
+        return ResponseEntity.ok(account);
     }
 
-
+    @GetMapping("/{account}")
+    public ResponseEntity<Account> getAccountInfo(@PathVariable String account) throws Exception {
+        Account accountInfo = accountService.getAccountInfo(account);
+        return ResponseEntity.ok(accountInfo);
+    }
 }
