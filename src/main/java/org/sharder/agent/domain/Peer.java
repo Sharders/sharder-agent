@@ -1,14 +1,28 @@
 package org.sharder.agent.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Peer
  *
  * @author bubai
+ * @author xy
  * @date 2018/4/13
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Peer {
     private String address;
+    private String uri;
     private int type;
+    private PeerLoad peerLoad;
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
 
     public String getAddress() {
         return address;
@@ -34,6 +48,14 @@ public class Peer {
         Peer peer = (Peer) o;
 
         return address.equals(peer.address);
+    }
+
+    public PeerLoad getPeerLoad() {
+        return peerLoad;
+    }
+
+    public void setPeerLoad(PeerLoad peerLoad) {
+        this.peerLoad = peerLoad;
     }
 
     @Override
