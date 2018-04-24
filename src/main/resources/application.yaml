@@ -22,6 +22,8 @@ spring:
 peers:
   list:
     - address: 49.4.9.166
+      uri: http://49.4.9.166:3215
       type: 1
     - address: 120.79.243.35
+      uri: http://120.79.243.35:3215
       type: 1

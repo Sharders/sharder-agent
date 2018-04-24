@@ -18,7 +18,9 @@ public enum RequestType {
     GET_BLOCK("getBlock"),
     GET_CONSTANTS("getConstants"),
     GET_ACCOUNT("getAccount"),
-    GET_DATA("getTaggedData");
+    GET_PEERS("getPeers"),
+    GET_DATA("getTaggedData"),
+    PING("pingPeer");
 
 
     private String type;
