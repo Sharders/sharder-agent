@@ -91,9 +91,10 @@ public class PeersHolder {
             for(Peer peer : peerMap.get(PeerState.UNCHECKED)){
                 try{
                     String uri = "http://" + peer.getAddress() +":" + peer.getPeerLoad().getPort();
+                    peer.setUri(uri);
                     params.put(RequestManager.KEY_BASE_URL, uri);
                     Peer pingPeer = ResponseUtils.convert(requestManager.requestSyn(RequestManager.TYPE_POST, params), Peer.class);
-                    peer.setPeerLoad(pingPeer.getPeerLoad());
+                    peer.getPeerLoad().setLoad(pingPeer.getPeerLoad().getLoad());
                     Date date = new Date();
                     peer.getPeerLoad().setLastUpdate(date.getTime());
                     peerMap.get(PeerState.CHECKED).add(peer);
