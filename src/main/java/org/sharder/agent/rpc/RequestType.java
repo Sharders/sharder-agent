@@ -20,7 +20,8 @@ public enum RequestType {
     GET_ACCOUNT("getAccount"),
     GET_PEERS("getPeers"),
     GET_DATA("getTaggedData"),
-    PING("pingPeer");
+    GET_INFO("getInfo"),
+    UPDATE_PEER("updatePeer");
 
 
     private String type;

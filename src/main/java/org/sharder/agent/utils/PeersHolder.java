@@ -1,8 +1,10 @@
 package org.sharder.agent.utils;
 
+import okhttp3.Response;
 import org.sharder.agent.config.PeersConfig;
 import org.sharder.agent.controller.PeerController;
 import org.sharder.agent.domain.Peer;
+import org.sharder.agent.domain.PeerLoad;
 import org.sharder.agent.domain.Peers;
 import org.sharder.agent.rpc.RequestManager;
 import org.sharder.agent.rpc.RequestType;
@@ -13,10 +15,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -38,39 +37,103 @@ public class PeersHolder {
         CHECKED, UNCHECKED, ACTIVED
     }
 
-    private static Peer bestPeer = null;
+    private static Peer bestPeer;
+    private static int minLoad = 5;
+    private static int maxLoad = 10;
     static private Map<PeerState,HashSet<Peer>> peerMap = new ConcurrentHashMap<>();
+
+    // bestPeer commercialUris
+    // TODO it should save in database
+    static public Map<String,HashSet<String>> commercialMap = new ConcurrentHashMap<>();
     static {
         peerMap.put(PeerState.CHECKED,new HashSet<>());
         peerMap.put(PeerState.UNCHECKED,new HashSet<>());
         peerMap.put(PeerState.ACTIVED,new HashSet<>());
     }
 
-    private void synSinglePeers(Peer peer){
-        HashMap<String,String> params = new HashMap<>();
-        params.put("requestType", RequestType.GET_PEERS.getType());
-        params.put("includePeerInfo","true");
-        params.put(RequestManager.KEY_BASE_URL, peer.getUri());
-        params.put(RequestManager.KEY_ACTION_URL, ACTION_URL_SHARDER);
-        try {
-            Peers peers = ResponseUtils.convert(requestManager.requestSyn(RequestManager.TYPE_POST, params), Peers.class);
-
-            for(Peer queriedPeer : peers.getPeers()) {
-                if(peerMap.get(PeerState.CHECKED).contains(queriedPeer)){
-                    findBestPeer(queriedPeer);
-                } else{
-                    peerMap.get(PeerState.UNCHECKED).add(queriedPeer);
-                }
+    public Peer getBestPeer(){
+        try{
+            if(bestPeer == null) {
+                Random random = new Random();
+                Peer peer = peersConfig.getList().get(random.nextInt(peersConfig.getList().size()));
+                peer = getPeerInfo(peer);
+                bestPeer = praseStringToPeer(peer.getBestPeer());
             }
-
-        } catch (Exception e) {
-            logger.error("can't syn peers", e);
+        }catch (Exception e){
+            logger.error("can't get peer info :", e);
+            getBestPeer();
         }
+
+        try{
+            getPeerInfo(bestPeer);
+        }catch (Exception e){
+            logger.error("can't get bestPeer info :", e);
+            String addr = bestPeer.getUri();
+            bestPeer = null;
+            getBestPeer();
+            notifyCommercials(addr);
+        }
+
+        return bestPeer;
     }
 
-    private void findBestPeer(Peer peer){
-        //TODO ① check load of peer and add peer into ACTIVED map ; ② set the best peer
-        bestPeer = bestPeer == null ? peer : (bestPeer.getPeerLoad().getLoad() > peer.getPeerLoad().getLoad() ? bestPeer : peer);
+    /**
+     *
+     * @param peer error peer
+     * @return
+     */
+    private boolean notifyCommercials(String peer){
+        boolean result = true;
+        getBestPeer();
+        Peer curBest = bestPeer;
+        HashSet<String> commercials = commercialMap.get(peer);
+        for(String commercial : commercials){
+            HashMap<String,String> params = new HashMap<>();
+            params.put("requestType", RequestType.UPDATE_PEER.getType());
+            params.put("newPeer", curBest.getUri());
+            params.put(RequestManager.KEY_BASE_URL,commercial);
+            try{
+                Response response = requestManager.requestSyn(RequestManager.TYPE_POST, params);
+                if(response.isSuccessful()){
+                    String responseStr = response.body().string();
+                    // TODO failed notify again
+                    if(!responseStr.contains(bestPeer.getUri())){
+                        logger.error("notify " + commercial + "failed, response is " + responseStr);
+                        result = false;
+                        continue;
+                    }
+                    //update map
+                    if(commercialMap.containsKey(curBest.getUri())){
+                        commercialMap.get(curBest.getUri()).add(commercial);
+                    }else {
+                        HashSet<String> newCommercials = new HashSet();
+                        newCommercials.add(commercial);
+                        commercialMap.put(bestPeer.getUri(),newCommercials);
+                    }
+                }
+            }catch (Exception e){
+                logger.error("notify " + commercial + "failed" ,e);
+                result = false;
+            }
+        }
+        commercialMap.remove(peer);
+        return result;
+    }
+
+    private Peer getPeerInfo(Peer peer) throws Exception{
+        HashMap<String,String> params = new HashMap<>();
+        params.put("requestType", RequestType.GET_INFO.getType());
+        params.put(RequestManager.KEY_BASE_URL, peer.getUri());
+        params.put(RequestManager.KEY_ACTION_URL, ACTION_URL_SHARDER);
+
+        Peer remote = ResponseUtils.convert(requestManager.requestSyn(RequestManager.TYPE_POST, params), Peer.class);
+        if(remote.getBestPeer().contains("127.0.0.1")){
+            remote.setBestPeer(remote.getBestPeer().substring(7));
+            remote.getBestPeer().replace("127.0.0.1",peer.getAddress());
+        }
+        peer.setPeerLoad(remote.getPeerLoad());
+        peer.setBestPeer(remote.getBestPeer());
+        return peer;
     }
 
     /**
@@ -81,58 +144,31 @@ public class PeersHolder {
     @Scheduled(initialDelay=1000, fixedDelay=20000)
     private Peer synPeers() {
         //TODO only run three times when system start
-        for(Peer peer : peersConfig.getList()) synSinglePeers(peer);
+        getBestPeer();
 
-        //ping unchecked peers
-        HashMap<String,String> params = new HashMap<>();
-        params.put("requestType", RequestType.PING.getType());
-        params.put(RequestManager.KEY_ACTION_URL, ACTION_URL_SHARDER);
-        if(peerMap.get(PeerState.UNCHECKED).size() > 0) {
-            for(Peer peer : peerMap.get(PeerState.UNCHECKED)){
-                try{
-                    String uri = "http://" + peer.getAddress() +":" + peer.getPeerLoad().getPort();
-                    peer.setUri(uri);
-                    params.put(RequestManager.KEY_BASE_URL, uri);
-                    Peer pingPeer = ResponseUtils.convert(requestManager.requestSyn(RequestManager.TYPE_POST, params), Peer.class);
-                    peer.getPeerLoad().setLoad(pingPeer.getPeerLoad().getLoad());
-                    Date date = new Date();
-                    peer.getPeerLoad().setLastUpdate(date.getTime());
-                    peerMap.get(PeerState.CHECKED).add(peer);
-                    peerMap.get(PeerState.UNCHECKED).remove(peer);
-
-                    synSinglePeers(peer);
-
-                    bestPeer = bestPeer == null ? peer : (bestPeer.getPeerLoad().getLoad() > peer.getPeerLoad().getLoad() ? bestPeer : peer);
-                }catch (Exception e){
-                    logger.error("can't ping unchecked peer:" + peer.getUri(), e);
-                    peerMap.get(PeerState.UNCHECKED).remove(peer);
-                }
+        for (String key : commercialMap.keySet()) {
+            Peer peer = praseStringToPeer(key);
+            try{
+                getPeerInfo(peer);
+            }catch (Exception e){
+                logger.error("error with get info from peer" + peer.getAddress() ,e);
+                notifyCommercials(key);
             }
+            int load = peer.getPeerLoad().getLoad();
+            if(load > maxLoad)
+                notifyCommercials(key);
         }
 
-        //ping checked peers
-        for(Peer peer : peerMap.get(PeerState.CHECKED)){
-            Date date = new Date();
-            if(date.getTime() - peer.getPeerLoad().getLastUpdate() > 3600){
-                try{
-                    String uri = "http://" + peer.getAddress() +":" + peer.getPeerLoad().getPort();
-                    params.put(RequestManager.KEY_BASE_URL, uri);
-                    Peer pingPeer = ResponseUtils.convert(requestManager.requestSyn(RequestManager.TYPE_POST, params), Peer.class);
-                    peer.setPeerLoad(pingPeer.getPeerLoad());
-                    date = new Date();
-                    peer.getPeerLoad().setLastUpdate(date.getTime());
-
-                    bestPeer = bestPeer == null ? peer : (bestPeer.getPeerLoad().getLoad() > peer.getPeerLoad().getLoad() ? bestPeer : peer);
-                }catch (Exception e){
-                    logger.error("can't ping checked peer:" + peer.getUri(), e);
-                    peerMap.get(PeerState.UNCHECKED).remove(peer);
-                }
-            }
-        }
         return bestPeer;
     }
 
-    public Peer getBestPeer() {
-        return bestPeer == null ? synPeers() : bestPeer;
+    private Peer praseStringToPeer(String addr){
+        Peer peer = new Peer();
+        peer.setAddress(addr.substring(0,addr.indexOf(":")));
+        if(addr.contains("http://"))
+            peer.setUri(addr);
+        else
+            peer.setUri("http://" + addr);
+        return peer;
     }
 }
