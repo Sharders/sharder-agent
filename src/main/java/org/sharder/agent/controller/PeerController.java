@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -24,6 +25,9 @@ import java.util.*;
 @RequestMapping("/v1/peers")
 public class PeerController {
     private static final Logger logger = LoggerFactory.getLogger(PeerController.class);
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Autowired
     private PeersConfig peersConfig;
@@ -59,7 +63,18 @@ public class PeerController {
      * @return
      */
     @GetMapping("/bestPeer")
-    public ResponseEntity<Peer> getBestPeer() {
-        return ResponseEntity.ok(peersHolder.getBestPeer());
+    public ResponseEntity<String> getBestPeer() {
+        String addr = request.getRemoteAddr();
+        int port = request.getRemotePort();
+        String uri = "http://" + addr + ":" + port;
+        Peer bestPeer = peersHolder.getBestPeer();
+        if(PeersHolder.commercialMap.containsKey(bestPeer.getUri())){
+            PeersHolder.commercialMap.get(bestPeer.getUri()).add(uri);
+        }else {
+            HashSet<String> commercials = new HashSet();
+            commercials.add(uri);
+            PeersHolder.commercialMap.put(bestPeer.getUri(),commercials);
+        }
+        return ResponseEntity.ok(bestPeer.getUri());
     }
 }

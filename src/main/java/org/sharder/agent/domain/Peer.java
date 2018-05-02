@@ -15,6 +15,15 @@ public class Peer {
     private String uri;
     private int type;
     private PeerLoad peerLoad;
+    private String bestPeer;//ip:port
+
+    public void setBestPeer(String bestPeer) {
+        this.bestPeer = bestPeer;
+    }
+
+    public String getBestPeer() {
+        return bestPeer;
+    }
 
     public String getUri() {
         return uri;
