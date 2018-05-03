@@ -127,9 +127,10 @@ public class PeersHolder {
         params.put(RequestManager.KEY_ACTION_URL, ACTION_URL_SHARDER);
 
         Peer remote = ResponseUtils.convert(requestManager.requestSyn(RequestManager.TYPE_POST, params), Peer.class);
+        remote.setBestPeer(remote.getBestPeer().substring(7));
         if(remote.getBestPeer().contains("127.0.0.1")){
-            remote.setBestPeer(remote.getBestPeer().substring(7));
-            remote.getBestPeer().replace("127.0.0.1",peer.getAddress());
+            String addr = remote.getBestPeer().replace("127.0.0.1",peer.getAddress());
+            remote.setBestPeer(addr);
         }
         peer.setPeerLoad(remote.getPeerLoad());
         peer.setBestPeer(remote.getBestPeer());
