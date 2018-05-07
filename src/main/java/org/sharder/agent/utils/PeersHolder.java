@@ -43,7 +43,7 @@ public class PeersHolder {
     private static int maxLoad = 10;
     static private Map<PeerState,HashSet<Peer>> peerMap = new ConcurrentHashMap<>();
 
-    @Value("${chain_admin_pwd}")
+    @Value("${agent.chain_admin_pwd}")
     private String CHAIN_ADMIN_PWD;
     // bestPeer commercialUris
     // TODO it should save in database
