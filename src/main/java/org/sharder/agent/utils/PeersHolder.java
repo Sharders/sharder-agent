@@ -11,6 +11,7 @@ import org.sharder.agent.rpc.RequestType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -42,6 +43,8 @@ public class PeersHolder {
     private static int maxLoad = 10;
     static private Map<PeerState,HashSet<Peer>> peerMap = new ConcurrentHashMap<>();
 
+    @Value("${chain_admin_pwd}")
+    private String CHAIN_ADMIN_PWD;
     // bestPeer commercialUris
     // TODO it should save in database
     static public Map<String,HashSet<String>> commercialMap = new ConcurrentHashMap<>();
@@ -123,6 +126,7 @@ public class PeersHolder {
     private Peer getPeerInfo(Peer peer) throws Exception{
         HashMap<String,String> params = new HashMap<>();
         params.put("requestType", RequestType.GET_INFO.getType());
+        params.put("adminPassword", CHAIN_ADMIN_PWD);
         params.put(RequestManager.KEY_BASE_URL, peer.getUri());
         params.put(RequestManager.KEY_ACTION_URL, ACTION_URL_SHARDER);
 

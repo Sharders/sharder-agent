@@ -3,6 +3,7 @@ agent:
   rpc_url: http://120.79.243.35:8215
   action_url: sharder
   upload_size: 5 * 1024 * 1024
+  chain_admin_pwd: ss2018
 ############ System Config ############
 server:
   port: 8088
